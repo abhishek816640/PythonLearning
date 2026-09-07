@@ -30,7 +30,18 @@ os.makedirs('output',exist_ok=True)
 
 # Save as different formats
 # 1. Excel format (good for sharing)
-df.to_excel('output/sales_data.xlxs', index=False)
+df.to_excel('output/sales_data.xlsx', index=False)
+
+#JSON format (good for web APIs)
+df.to_json('output/sales_date.json',orient='records', indent=2)
+
+# 3. Updated CSV (with our new total column)
+df.to_csv('output/sales_with_totals.csv', index=False)
+
+print("\nFiles saved:")
+print("- output/sales_data.json")
+print("- output/sales_data.xlsx") 
+print("- output/sales_with_totals.csv")
 
 
 
