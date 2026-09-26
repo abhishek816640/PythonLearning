@@ -1,47 +1,26 @@
-import os
 import pandas as pd
-import json
+from helpers import calculate_total , format_currency
 
-#Check which directory we are in
-print("Current directory : ",os.getcwd())
-
-#Check if our data file exists
-data_path = "data/sales.csv"
-#data_path = "..data/analyzer.py"
-if os.path.exists(data_path):
-    print("The file has been found")
-else:
-    print(f"Cannot find {data_path}")
-    print("make Sure you are running from sales-analysis")    
-
-#Read the csv file
+#Read data
 df = pd.read_csv('data/sales.csv')
-print("CSV Data :")
-print(df)
-print(f"\nShape : {df.shape[0]} rows,{df.shape[1]} columns")
 
-# Quick operation: calculate total for each row
-df['total'] = df['quantity'] * df['price']
-print(f"\nWith Totals : ")
-print(df)
+#calculate total of each row
+totals = []
+for index , row in df.iterrows():
+    total = calculate_total(row['quantity'],row['price'])
+    totals.append(total)
+print(totals)
 
-#Create output directory
-os.makedirs('output',exist_ok=True)
+#Add totals to our data
+df['total'] = totals
 
-# Save as different formats
-# 1. Excel format (good for sharing)
-df.to_excel('output/sales_data.xlsx', index=False)
+#display with formatted totals
+print("Sales data:")
+for index,row in df.iterrows():
+    formatted_total = format_currency(row['total'])
+    print(f"{row['product']} : {formatted_total}")
 
-#JSON format (good for web APIs)
-df.to_json('output/sales_date.json',orient='records', indent=2)
-
-# 3. Updated CSV (with our new total column)
-df.to_csv('output/sales_with_totals.csv', index=False)
-
-print("\nFiles saved:")
-print("- output/sales_data.json")
-print("- output/sales_data.xlsx") 
-print("- output/sales_with_totals.csv")
-
-
-
+#show grand total
+grand_total = df['total'].sum()
+formatted_grand_total = format_currency(grand_total)   
+print(f"\nGrant Total is : {formatted_grand_total}")
